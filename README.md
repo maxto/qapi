@@ -1,2 +1,2 @@
 # qapi
-Low-level functions for quantitative analysis in R
+Low-level functions for Quantitative Analysis in R
