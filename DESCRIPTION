@@ -1,6 +1,7 @@
 Package: qapi
 Title: Low-level functions for quantitative analysis in R
-Version: 0.0.0.9006
+Version: 0.0.0.9009
+Date: 2021-01-27 11:55:37
 Authors@R: 
     person(given = "Max",
            family = "Todaro",
@@ -13,7 +14,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
-    magrittr
+    xts
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

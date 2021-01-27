@@ -22,4 +22,5 @@ Create random time series with normal distribution
 \examples{
 rand_ts(20,2)
 rand_ts(20,3,as_ret=TRUE)
+
 }
