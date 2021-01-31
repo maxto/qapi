@@ -94,7 +94,7 @@ active_return <- function(x,y,t=252,is_geom=T) {
 #' Sharpe ratio for a vector of asset/portolio returns
 #'
 #' @param x asset returns
-#' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
+#' @param frisk annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
 #'
 #' @return numeric
 #' @export
@@ -113,7 +113,7 @@ sharpe_ratio <- function(x,frisk=0) {
 #' Return on asset - risk free rate
 #'
 #' @param x asset returns
-#' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
+#' @param frisk annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
 #'
 #' @return numeric
 #' @export
@@ -132,7 +132,7 @@ excess_return <- function(x,frisk=0) {
 #' Sharpe ratio calculated on annualized excess return / annualized standard deviation
 #'
 #' @param x asset returns
-#' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
+#' @param frisk annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
 #' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
 #' @param is_geom TRUE geometric, FALSE simple
 #'
@@ -154,7 +154,7 @@ ann_sharpe_ratio <- function(x,frisk=0,t=252,is_geom=TRUE) {
 #' Sharpe Ratio adjusted for skewness and kurtosis with a penalty factor for negative skewness and excess kurtosis
 #'
 #' @param x asset returns
-#' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
+#' @param frisk annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
 #' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
 #' @param is_geom TRUE geometric, FALSE simple
 #'
@@ -174,7 +174,7 @@ adj_ann_sharpe_ratio <- function(x,frisk=0,t=252,is_geom=TRUE) {
 
 #' Drawdown
 #'
-#' Calculate drawdown array from asset returns
+#' Calculate drawdown array from asset returns. Return a vector with numbers >= 0
 #'
 #' @param x asset returs
 #' @param is_geom TRUE geometric, FALSE simple
@@ -278,4 +278,78 @@ avg_drawdown <- function(x,is_geom=TRUE) {
 }
 
 
+#' Historical Value At Risk
+#'
+#' Historical value at risk
+#'
+#' @param x asset returns
+#' @param p confidence level
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' hist_var(xx,p=0.95)
+#'
+hist_var <- function(x,p=0.95) {
+  stats::quantile(x,1-p,type = 7,names = F) #type 7
+}
+
+#' Parametric Value At Risk
+#'
+#' Parametric or gaussian value at risk
+#'
+#' @param x asset returns
+#' @param p confidence level
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' param_var(xx,p=0.95)
+#'
+param_var <- function(x,p=0.95) {
+  stats::sd(x)*norminv(1-p)+mean(x)
+}
+
+
+#' Historical Conditional Value At Risk
+#'
+#' Historical conditional value at risk
+#'
+#' @param x asset returns
+#' @param p confidence level
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' hist_cvar(xx,p=0.95)
+#'
+hist_cvar <- function(x,p=0.95) {
+  mean(x[x<=hist_var(x,p)])
+}
+
+#' Parametric Conditional Value At Risk
+#'
+#' Parametric Conditional Value-At-Risk. More sensitive to the shape of the loss distribution in the tails.
+#' Also known as Expected Shortfall (ES), Expected Tail Loss (ETL).
+#'
+#' @param mu mean value
+#' @param sigma standard deviation
+#' @param p confidence level
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' param_cvar(mean(xx),sd(xx))
+#'
+param_cvar <- function(mu=0,sigma=1,p=0.95) {
+  -sigma*normpdf(norminv(1-p))/(1-p)+mu
+}
 

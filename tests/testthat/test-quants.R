@@ -66,3 +66,25 @@ test_that("avg_drawdown",{
   expect_type(ann_sharpe_ratio(xx),"double")
 })
 
+test_that("hist_var",{
+  expect_equal(hist_var(xx),-0.01175,tolerance = 1e-4)
+  expect_type(hist_var(xx),"double")
+})
+
+test_that("param_var",{
+  expect_equal(param_var(xx),-0.02031075,tolerance = 1e-7)
+  expect_type(param_var(xx),"double")
+})
+
+test_that("hist_cvar",{
+  expect_equal(hist_cvar(xx),-0.014,tolerance = 1e-3)
+  expect_type(hist_cvar(xx),"double")
+})
+
+test_that("param_cvar",{
+  expect_equal(param_cvar(mean(xx),stats::sd(xx)),-0.03001782,tolerance = 1e-6)
+  expect_type(param_cvar(mean(xx),stats::sd(xx)),"double")
+})
+
+
+

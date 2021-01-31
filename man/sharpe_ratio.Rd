@@ -9,7 +9,7 @@ sharpe_ratio(x, frisk = 0)
 \arguments{
 \item{x}{asset returns}
 
-\item{frisk}{annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc}
+\item{frisk}{annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc}
 }
 \value{
 numeric

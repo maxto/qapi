@@ -9,7 +9,7 @@ ann_sharpe_ratio(x, frisk = 0, t = 252, is_geom = TRUE)
 \arguments{
 \item{x}{asset returns}
 
-\item{frisk}{annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc}
+\item{frisk}{annual free-risk rate. For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc}
 
 \item{t}{frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily}
 

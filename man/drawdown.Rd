@@ -15,7 +15,7 @@ drawdown(x, is_geom = TRUE)
 numeric vector of length x
 }
 \description{
-Calculate drawdown array from asset returns
+Calculate drawdown array from asset returns. Return a vector with numbers >= 0
 }
 \examples{
 xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
