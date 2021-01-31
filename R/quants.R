@@ -30,22 +30,21 @@ rand_ts <- function(m = 20,n = 1,as_ret = F) {
 #'
 #' @param x asset returns
 #' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
-#' @param method "geometric" or "simple" (def: "geometric")
+#' @param is_geom TRUE geometric, FALSE simple
 #'
 #' @return numeric
 #' @export
 #'
 #' @examples
 #' xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
-#' ann_return(xx,t=12,method="geometric")
+#' ann_return(xx,t=12)
 #'
-ann_return <- function(x,t=252,method="geometric") {
+ann_return <- function(x,t = 252,is_geom = TRUE) {
   n <- length(x)
-  switch(method,
-         "geometric" = prod(1+x)^(t/n) - 1,
-         "simple" = mean(x) * t,
-         stop("unkown method")
-  )
+  if (!is_geom) {
+    return(mean(x) * t)
+  }
+  prod(1+x)^(t/n) - 1
 }
 
 #' Annualized Risk
@@ -75,7 +74,7 @@ ann_risk <- function(x,t=252) {
 #' @param x asset returns
 #' @param y benchmark returns
 #' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
-#' @param method "geometric" or "simple" (def: "geometric")
+#' @param is_geom TRUE geometric, FALSE simple
 #'
 #' @return numeric
 #' @export
@@ -85,9 +84,8 @@ ann_risk <- function(x,t=252) {
 #' yy <- c(0.04,-0.022,0.043,0.028,-0.078,-0.011,0.033,-0.049,0.09,0.087)
 #' active_return(xx,yy,t=12)
 #'
-active_return <- function(x,y,t=252,method="geometric") {
-  ann_return(x,t,method) - ann_return(y,t,method)
-
+active_return <- function(x,y,t=252,is_geom=T) {
+  ann_return(x,t,is_geom) - ann_return(y,t,is_geom)
 }
 
 
@@ -136,18 +134,148 @@ excess_return <- function(x,frisk=0) {
 #' @param x asset returns
 #' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
 #' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
-#' @param method method "geometric" or "simple" (def: "geometric")
+#' @param is_geom TRUE geometric, FALSE simple
 #'
 #' @return numeric
 #' @export
 #'
 #' @examples
 #' xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
-#' ann_sharpe_ratio(xx,frisk=0.02/12,t=12,method="geometric")
+#' ann_sharpe_ratio(xx,frisk=0.02/12,t=12)
 #'
-ann_sharpe_ratio <- function(x,frisk=0,t=252,method="geometric") {
+ann_sharpe_ratio <- function(x,frisk=0,t=252,is_geom=TRUE) {
   xs <- excess_return(x,frisk)
-  ann_return(xs,t,method)/ann_risk(x,t)
+  ann_return(xs,t,is_geom)/ann_risk(x,t)
 }
+
+
+#' Adjusted Annualized Sharpe ratio
+#'
+#' Sharpe Ratio adjusted for skewness and kurtosis with a penalty factor for negative skewness and excess kurtosis
+#'
+#' @param x asset returns
+#' @param frisk annual free-risk rate (def: 0). For daily rate (frisk/252), weekly (frisk/52), monthly (frisk/12), etc
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
+#' adj_ann_sharpe_ratio(xx,frisk=0.02/12,t=12)
+#'
+adj_ann_sharpe_ratio <- function(x,frisk=0,t=252,is_geom=TRUE) {
+  sr <- ann_sharpe_ratio(x,frisk,t,is_geom)
+  sk <- skewness(x)
+  ku <- kurtosis(x)
+  sr * (1 + (sk/6) * sr - ((ku - 3)/24) * (sr)^2)
+}
+
+#' Drawdown
+#'
+#' Calculate drawdown array from asset returns
+#'
+#' @param x asset returs
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric vector of length x
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' drawdown(xx)
+#'
+drawdown <- function(x,is_geom=TRUE) {
+  v <- cumprod(1 + x)
+  if (!is_geom) {
+    v <- 1 + cumsum(x)
+  }
+  1 - v/cummax(v)
+}
+
+#' Drawdown information
+#'
+#' Return a list of drawdown info: value, start index, trough index, end index, duration, peak-to-trough, recovery period
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return list
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' drawdown_info(xx)
+#'
+drawdown_info <- function(x,is_geom=TRUE) {
+  x <- as.numeric(x) #force to be numeric vector
+  dd <- drawdown(x,is_geom)
+  #init
+  dd_ <- c()
+  dds <- sign(dd)
+  last_dd <- dd[1]
+  last_pos <- dds[1]
+  idx <- 1
+  sd <- 1
+  ed <- 1
+  last_dd_idx <- 1
+  dd_start <- c()
+  dd_trough <- c()
+  dd_end <- c()
+  for (i in 1:length(dd)) {
+    if (dds[i] == last_pos) {
+      if (dd[i] > last_dd) {
+        last_dd <- dd[i]
+        last_dd_idx <- i
+      }
+      ed <- i + 1
+    } else {
+      if (last_pos == 1) {
+        dd_[idx] <- last_dd
+        dd_start[idx] <- sd
+        dd_trough[idx] <- last_dd_idx
+        dd_end[idx] <- ed
+        idx <- idx + 1
+      }
+      sd <- i
+      last_dd <- dd[i]
+      last_dd_idx <- i
+      ed <- i + 1
+      last_pos <- dds[i]
+    }
+  }
+  if (last_pos == 1) {
+    dd_[idx] <- last_dd
+    dd_start[idx] <- sd
+    dd_trough[idx] <- last_dd_idx
+    dd_end[idx] <- ed
+  }
+  return (list("dd_val"=dd_,"dd_start"=dd_start,"dd_trough"=dd_trough,"dd_end"= dd_end,
+               "dd_length" = (dd_end - dd_start + 1),"dd_peak_trough"= (dd_trough - dd_start + 1),
+               "dd_recov" = dd_end - dd_trough))
+
+}
+
+
+
+#' Average Drawdown
+#'
+#' Return the average drawdown from asset returns
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' avg_drawdown(xx)
+#'
+avg_drawdown <- function(x,is_geom=TRUE) {
+  mean(drawdown_info(x,is_geom)[["dd_val"]])
+}
+
 
 

@@ -4,7 +4,7 @@
 \alias{active_return}
 \title{Active return}
 \usage{
-active_return(x, y, t = 252, method = "geometric")
+active_return(x, y, t = 252, is_geom = T)
 }
 \arguments{
 \item{x}{asset returns}
@@ -13,7 +13,7 @@ active_return(x, y, t = 252, method = "geometric")
 
 \item{t}{frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily}
 
-\item{method}{"geometric" or "simple" (def: "geometric")}
+\item{is_geom}{TRUE geometric, FALSE simple}
 }
 \value{
 numeric

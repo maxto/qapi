@@ -1,3 +1,4 @@
+# utils for development/testing
 
 na_omit <- function(x) {
   stats::na.omit(x)
@@ -12,4 +13,3 @@ as_xts <- function(x) {
 as_df <- function(x) {
   as.data.frame(x)
 }
-

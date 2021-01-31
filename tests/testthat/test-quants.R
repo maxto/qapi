@@ -1,16 +1,17 @@
-A <- rand_ts(m = 20,n = 2,as_ret = T)
+AA <- rand_ts(m = 20,n = 2,as_ret = T)
 xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
-yy <- c(0.04,-0.022,0.043,0.028,-0.078,-0.011,0.033,-0.049,0.09,0.087)
+yy <- c(-0.005,0.081,0.04,-0.037,-0.061,0.058,-0.049,-0.021,0.062,0.058)
+bb <- c(0.002,0.026,0.011,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039,-0.005,0.081,0.04,-0.037,-0.061,
+        0.014,-0.049,-0.021,0.062,0.058,-0.064,0.017,-0.004,-0.002,-0.021,0.011,0.047,0.024,0.033,-0.007,0.047,0.006,0.01,-0.002,0.034,0.01)
 
 test_that("rand_ts", {
-  expect_type(A,"double")
-  expect_equal(dim(A),c(20,2))
+  expect_type(AA,"double")
+  expect_equal(dim(AA),c(20,2))
 })
 
 test_that("ann_return",{
-  expect_equal(ann_return(xx,t=12,method="geometric"),0.2338147,tolerance = 1e-7)
+  expect_equal(ann_return(xx,t=12,is_geom=TRUE),0.2338147,tolerance = 1e-7)
   expect_type(ann_return(xx),"double")
-  expect_error(ann_return(xx,method = "armonic"))
 })
 
 
@@ -20,10 +21,10 @@ test_that("ann_risk",{
 })
 
 test_that("active_return",{
-  expect_equal(active_return(xx,yy,t=12),0.04197881,tolerance = 1e-7)
+  expect_equal(active_return(xx,yy,t=12),0.08872457,tolerance = 1e-7)
   expect_type(ann_risk(xx),"double")
   expect_type(ann_risk(yy),"double")
-  expect_length(active_return(A[,1],A[,2]),1L)
+  expect_length(active_return(AA[,1],AA[,2]),1L)
 })
 
 test_that("sharpe_ratio",{
@@ -42,3 +43,26 @@ test_that("ann_sharpe_ratio",{
   expect_equal(ann_sharpe_ratio(xx,t = 12),2.905513,tolerance = 1e-7)
   expect_type(ann_sharpe_ratio(xx),"double")
 })
+
+test_that("adj_ann_sharpe_ratio",{
+  expect_equal(adj_ann_sharpe_ratio(xx,t = 12),3.735901,tolerance = 1e-6)
+  expect_type(ann_sharpe_ratio(xx),"double")
+})
+
+test_that("drawdown",{
+  res <- c(0.000,0.000,0.000,0.009,0.000,0.000,0.000,0.000,0.014,0.000)
+  expect_equal(drawdown(xx,is_geom = T),res,tolerance = 1e-4)
+  expect_type(drawdown(xx),"double")
+  expect_length(drawdown(xx),length(res))
+})
+
+test_that("drawdown_info",{
+  expect_type(drawdown_info(xx),"list")
+  expect_length(drawdown_info(xx),7)
+})
+
+test_that("avg_drawdown",{
+  expect_equal(avg_drawdown(xx),0.0115,tolerance = 1e-4)
+  expect_type(ann_sharpe_ratio(xx),"double")
+})
+

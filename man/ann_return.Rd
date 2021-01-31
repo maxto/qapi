@@ -4,14 +4,14 @@
 \alias{ann_return}
 \title{Annualized return}
 \usage{
-ann_return(x, t = 252, method = "geometric")
+ann_return(x, t = 252, is_geom = TRUE)
 }
 \arguments{
 \item{x}{asset returns}
 
 \item{t}{frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily}
 
-\item{method}{"geometric" or "simple" (def: "geometric")}
+\item{is_geom}{TRUE geometric, FALSE simple}
 }
 \value{
 numeric
@@ -21,6 +21,6 @@ Average annualized returns
 }
 \examples{
 xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
-ann_return(xx,t=12,method="geometric")
+ann_return(xx,t=12)
 
 }
