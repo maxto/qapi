@@ -45,7 +45,25 @@ remotes::install_github("maxto/qapi")
 
 - **rand_ts** - Random time series
 
+## Usage
 
+```r
+library(qapi)
 
+# rand time series
+ts_mat <- rand_ts(m = 20,n = 3,as_ret = T,method="matrix")
+ts_xts <- rand_ts(m = 20,n = 3,as_ret = T,method="xts")
+ts_df <- rand_ts(m = 20,n = 3,as_ret = T,method="data.frame")
 
+# single column or vector
+sharpe_ratio(ts_mat[,1])
+sharpe_ratio(ts_xts[,1])
+sharpe_ratio(ts_df$s1)
+
+# for multiple columns use an apply function
+apply(ts_mat,2,function(a)sharpe_ratio(a))
+apply(ts_xts,2,function(a)sharpe_ratio(a))
+apply(ts_df,2,function(a)sharpe_ratio(a))
+
+```
 

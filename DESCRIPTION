@@ -1,19 +1,21 @@
 Package: qapi
 Title: Low-level functions for quantitative analysis
-Version: 0.0.0.9012
-Date: 2021-01-31 22:14:15
+Version: 0.0.0.9015
+Date: 2021-02-01 10:46:47
 Authors@R: 
     person(given = "Max",
            family = "Todaro",
            role = c("aut", "cre"),
            email = "m.todaro.ge@gmail.com")
-Description: A collection of functions for quantitative
-    analysis. The package aims to speed up calculations for large data
-    manipulation, web app, micro-services and so on.
+Description: Qapi provides a collection of functions for
+    quantitative analysis in finance. The package aims to speed up
+    calculations for large data manipulation, web app or micro-service.
+    Code is minimal with a limited packages dependency,basic input
+    requirements and errors handling, no missing values management.
 License: GPL (>= 2)
 Imports: 
-    xts,
-    pracma
+    pracma,
+    xts
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -17,7 +17,7 @@
 rand_ts <- function(m = 20,n = 1,as_ret = F,method = c("matrix","xts","data.frame")) {
   method <- method[1]
   ret <- matrix(stats::rnorm(m*n),m,n)/100
-  colnames(ret) <- paste("s",1:n)
+  colnames(ret) <- paste0("s",1:n)
   rownames(ret) <- 1:m
   out <- apply(ret,2,function(a)cumprod(1+a))
   if (as_ret) {
