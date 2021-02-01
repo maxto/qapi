@@ -7,11 +7,11 @@ Authors@R:
            family = "Todaro",
            role = c("aut", "cre"),
            email = "m.todaro.ge@gmail.com")
-Description: Qapi provides a collection of functions for
-    quantitative analysis in finance. The package aims to speed up
-    calculations for large data manipulation, web app or micro-service.
-    Code is minimal with a limited packages dependency,basic input
-    requirements and errors handling, no missing values management.
+Description: Qapi provides a collection of low-level functions
+    for quantitative analysis in finance. The package aims to optimize
+    metrics for local data analysis, shiny web app or plumber-based
+    microservice. Code is minimal with a limited packages dependency and
+    basic input requirements. No missing values handling.
 License: GPL (>= 2)
 Imports: 
     pracma,

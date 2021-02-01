@@ -2,10 +2,11 @@
 
 ## Overview
 
-Qapi provides a collection of functions for quantitative analysis in finance. The package aims to speed up calculations for large data manipulation, web app or micro-service. Code is minimal with a limited packages dependency,basic input requirements and errors handling, no missing values management.
+Qapi provides a collection of low-level functions for quantitative analysis in finance. The package aims to optimize metrics for local data analysis, shiny web app or plumber-based microservice. Code is minimal with a limited packages dependency and basic input requirements. No missing values handling.
 
-The package can be easily applied to `matrix`, `data.frame`, `data.table`, `list`, etc. with `apply` family functions, `tidyverse` or custom classes.
+The package can be easily applied to `matrix`, `data.frame`, `data.table`, `list`, etc. with `apply` family functions or other packages, working on vectors and matrices.
 
+Functions are implemented in pure R, for big data manipulation is advisable to use parallelization or C-based calculations.
 
 ## Installation
 
