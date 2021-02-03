@@ -6,11 +6,3 @@ as_xts <- function(x) {
   xts::xts(x, order.by = d)
 }
 
-norminv <- function(p,mu=0,sigma=1) {
-  x0 <- -sqrt(2)*pracma::erfcinv(2*p)
-  x0*sigma+mu
-}
-
-normpdf <- function(x,mu=0,sigma=1) {
-  exp(-0.5 * ((x - mu)/sigma)^2) / (sqrt(2 * pi) * sigma)
-}
