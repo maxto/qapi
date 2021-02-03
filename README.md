@@ -41,6 +41,8 @@ remotes::install_github("maxto/qapi")
 
 - **kurtosis** - Kurtosis
 - **skewness** - Skewness
+- **normpdf** - Normal probability density function (pdf)
+- **norminv** - Inverse of the normal cumulative distribution function (cdf)
 
 ### Time series
 
