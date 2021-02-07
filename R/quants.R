@@ -328,3 +328,10 @@ param_cvar <- function(mu=0,sigma=1,p=0.95) {
   -sigma*normpdf(norminv(1-p))/(1-p)+mu
 }
 
+
+downside_risk <- function(x,mar=0) {
+  n <- length(x)
+  z <- sum(ifelse(xx-mar>0,0,xx-mar)^2/n)
+  sqrt(z)
+}
+
