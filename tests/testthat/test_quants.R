@@ -1,8 +1,7 @@
 AA <- rand_ts(m = 20,n = 2,as_ret = T)
 xx <- c(0.003,0.026,0.015,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039)
 yy <- c(-0.005,0.081,0.04,-0.037,-0.061,0.058,-0.049,-0.021,0.062,0.058)
-bb <- c(0.002,0.026,0.011,-0.009,0.014,0.024,0.015,0.066,-0.014,0.039,-0.005,0.081,0.04,-0.037,-0.061,
-        0.014,-0.049,-0.021,0.062,0.058,-0.064,0.017,-0.004,-0.002,-0.021,0.011,0.047,0.024,0.033,-0.007,0.047,0.006,0.01,-0.002,0.034,0.01)
+
 
 test_that("ann_return",{
   expect_equal(ann_return(xx,t=12,is_geom=TRUE),0.2338147,tolerance = 1e-7)
@@ -61,6 +60,21 @@ test_that("avg_drawdown",{
   expect_type(ann_sharpe_ratio(xx),"double")
 })
 
+test_that("max_drawdown",{
+  expect_equal(max_drawdown(xx),0.014,tolerance = 1e-3)
+  expect_type(max_drawdown(xx),"double")
+})
+
+test_that("ulcer_index",{
+  expect_equal(ulcer_index(xx),0.005263079,tolerance = 1e-7)
+  expect_type(ulcer_index(xx),"double")
+})
+
+test_that("calmar_ratio",{
+  expect_equal(calmar_ratio(xx,ann_frisk = 0.01,t=12),15.98676,tolerance = 1e-5)
+  expect_type(calmar_ratio(xx,ann_frisk = 0.01,t=12),"double")
+})
+
 test_that("hist_var",{
   expect_equal(hist_var(xx),-0.01175,tolerance = 1e-4)
   expect_type(hist_var(xx),"double")
@@ -81,5 +95,37 @@ test_that("param_cvar",{
   expect_type(param_cvar(mean(xx),stats::sd(xx)),"double")
 })
 
+test_that("downside_risk",{
+  expect_equal(downside_risk(xx),0.005263079,tolerance = 1e-7)
+  expect_type(downside_risk(xx),"double")
+})
 
+test_that("downside_potential",{
+  expect_equal(downside_potential(xx), 0.0023,tolerance = 1e-3)
+  expect_type(downside_potential(xx),"double")
+})
 
+test_that("sortino_ratio",{
+  expect_equal(sortino_ratio(xx),3.401051,tolerance = 1e-6)
+  expect_type(sortino_ratio(xx),"double")
+})
+
+test_that("ann_sortino_ratio",{
+  expect_equal(ann_sortino_ratio(xx,t = 12,ann_mar = 0.01),11.48044,tolerance = 1e-5)
+  expect_type(ann_sortino_ratio(xx),"double")
+})
+
+test_that("upside_risk",{
+  expect_equal(upside_risk(xx),0.02789982,tolerance = 1e-7)
+  expect_type(upside_risk(xx),"double")
+})
+
+test_that("upside_potential",{
+  expect_equal(upside_potential(xx),0.0202,tolerance = 1e-4)
+  expect_type(upside_potential(xx),"double")
+})
+
+test_that("omega_ratio",{
+  expect_equal(omega_ratio(xx),8.782609,tolerance = 1e-6)
+  expect_type(omega_ratio(xx),"double")
+})

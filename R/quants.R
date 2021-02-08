@@ -184,7 +184,9 @@ drawdown <- function(x,is_geom=TRUE) {
 #' drawdown_info(xx)
 #'
 drawdown_info <- function(x,is_geom=TRUE) {
-  x <- as.numeric(x) #force to be numeric vector
+  if (class(x) != "numeric") {
+    x <- as.numeric(x) #force to be numeric vector
+  }
   dd <- drawdown(x,is_geom)
   #init
   dd_ <- c()
@@ -250,6 +252,62 @@ drawdown_info <- function(x,is_geom=TRUE) {
 #'
 avg_drawdown <- function(x,is_geom=TRUE) {
   mean(drawdown_info(x,is_geom)[["dd_val"]])
+}
+
+#' Maximum Drawdown
+#'
+#' Return the maximum drawdown from asset returns
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' max_drawdown(xx)
+#'
+max_drawdown <- function(x,is_geom=TRUE) {
+  max(drawdown(x,is_geom))
+}
+
+#' Ulcer index
+#'
+#' RUlcer Index of Peter G. Martin (1987). The impact of long, deep drawdowns will have significant impact because the underperformance since the last peak is squared
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' ulcer_index(xx)
+#'
+ulcer_index <- function(x,is_geom=TRUE) {
+  sqrt(sum(drawdown(x,is_geom)^2)/length(x))
+}
+
+#' Calmar ratio
+#'
+#' A risk-adjusted measure like Sharpe ratio that uses maximum drawdown instead of standard deviation for risk
+#'
+#' @param x asset returns
+#' @param ann_frisk annual free risk value
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' calmar_ratio(xx,ann_frisk = 0.01,t=12)
+#'
+calmar_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
+  (ann_return(x,t,is_geom) - ann_frisk)/max_drawdown(x,is_geom)
 }
 
 
@@ -329,9 +387,132 @@ param_cvar <- function(mu=0,sigma=1,p=0.95) {
 }
 
 
+#' Downside risk
+#'
+#' Downside Risk or Semi-Standard Deviation.Measures  the  variability  of  underperformance  below  a  minimum  target   rate
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' downside_risk(xx,mar=0.1/100)
+#'
 downside_risk <- function(x,mar=0) {
-  n <- length(x)
-  z <- sum(ifelse(xx-mar>0,0,xx-mar)^2/n)
-  sqrt(z)
+  sqrt(sum(ifelse(x-mar>0,0,x-mar)^2)/length(x))
 }
+
+#' Downside potential
+#'
+#' Downside potential is the first lower partial moment
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' downside_potential(xx)
+#'
+downside_potential <- function(x,mar=0) {
+  -sum(ifelse(x-mar>0,0,x-mar))/length(x)
+}
+
+#' Sortino ratio
+#'
+#' Sortino ratio
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' sortino_ratio(xx)
+#'
+sortino_ratio <- function(x,mar=0) {
+  mean(excess_return(x,mar))/downside_risk(x,mar)
+}
+
+#' Annualized Sortino ratio
+#'
+#' Annualized sortino ratio
+#'
+#' @param x asset returns
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param ann_mar annual minimum acceptable return
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' ann_sortino_ratio(xx,t=12,ann_mar=0.01)
+#'
+ann_sortino_ratio <- function(x,t=252,ann_mar=0,is_geom=TRUE) {
+  (ann_return(x,t,is_geom) - ann_mar)/(downside_risk(x,mar=ann_mar/t)*sqrt(t))
+}
+
+#' Upside risk
+#'
+#' Measures  the  variability  of  overperformance  above  a  minimum  target   rate
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' upside_risk(xx,mar=0.1/100)
+#'
+upside_risk <- function(x,mar=0) {
+  sqrt(sum(ifelse(x-mar<0,0,x-mar)^2)/length(x))
+}
+
+#' Upside potential
+#'
+#' Upside potential
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' upside_potential(xx,mar=0.1/100)
+#'
+upside_potential <- function(x,mar=0) {
+  sum(ifelse(x-mar<0,0,x-mar)/length(x))
+}
+
+#' Omega ratio
+#'
+#' A gain/loss ratio: upside potential/downside potential
+#'
+#' @param x asset returns
+#' @param mar minimum acceptable return
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' omega_ratio(xx)
+#'
+omega_ratio <- function(x,mar=0) {
+  upside_potential(x,mar)/downside_potential(x,mar)
+}
+
 
