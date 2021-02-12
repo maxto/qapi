@@ -516,3 +516,18 @@ omega_ratio <- function(x,mar=0) {
 }
 
 
+martin_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
+  (ann_return(x,t,is_geom) - ann_frisk)/ulcer_index(x,is_geom)
+}
+
+pain_index <- function(x,is_geom=TRUE) {
+  sum(drawdown(ww))/length(ww)
+}
+
+pain_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
+  (ann_return(x,t,is_geom) - ann_frisk)/pain_index(x,is_geom)
+}
+
+burke_ratio <- function(x,ann_frisk,t=252,is_geom=TRUE) {
+
+}
