@@ -234,6 +234,51 @@ drawdown_info <- function(x,is_geom=TRUE) {
 
 }
 
+#' Continous drawdawn
+#'
+#' Return largest individual drawdowns
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' cdrawdown(xx)
+#'
+cdrawdown <- function(x,is_geom=TRUE) {
+  cdd <- c()
+  tt <- 1
+  tmp <- 0
+  for (i in 1:length(x)) {
+    if (x[i] < 0) {
+      if (tmp == 0) {
+        tmp <- 1 + x[i]
+      } else {
+        if (is_geom) {
+          tmp <- tmp * (1 + x[i])
+        } else {
+          tmp <- tmp + x[i]
+        }
+      }
+    }
+    if (x[i] >= 0) {
+      if (tmp != 0) {
+        cdd[tt] = 1 - tmp
+        tt <- tt+1
+        tmp <- 0
+      }
+    }
+  }
+  if (tmp != 0) {
+    cdd <- c(cdd,1-tmp)
+    tmp <- 0
+  }
+  cdd
+}
+
 
 
 #' Average Drawdown
@@ -516,18 +561,112 @@ omega_ratio <- function(x,mar=0) {
 }
 
 
+#' Martin ratio
+#'
+#' A risk-adjusted measure with free risk and Ulcer index.
+#'
+#' @param x asset returns
+#' @param ann_frisk annual free risk
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' martin_ratio(xx,ann_frisk=0.01,t=12)
+#'
 martin_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
   (ann_return(x,t,is_geom) - ann_frisk)/ulcer_index(x,is_geom)
 }
 
+#' Pain index
+#'
+#' Mean value of the drawdowns, similar to Ulcer Index
+#'
+#' @param x asset returns
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' pain_index(xx)
+#'
 pain_index <- function(x,is_geom=TRUE) {
-  sum(drawdown(ww))/length(ww)
+  sum(drawdown(x,is_geom))/length(x)
 }
 
+#' Pain ratio
+#'
+#' A risk-adjusted measure with free risk and Pain index
+#'
+#' @param x asset returns
+#' @param ann_frisk annual free risk
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' pain_ratio(xx,ann_frisk=0.01,t=12)
+#'
 pain_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
   (ann_return(x,t,is_geom) - ann_frisk)/pain_index(x,is_geom)
 }
 
-burke_ratio <- function(x,ann_frisk,t=252,is_geom=TRUE) {
+#' Burke ratio
+#'
+#' A risk-adjusted measure with free risk and drawdowns. For the 'simple' mode the excess return over free risk is divided by the square root of
+#' the sum of the square of the drawdowns. For the 'modified' mode the Burke Ratio is multiplied
+#' by the square root of the number of data.
+#'
+#' @param x asset returns
+#' @param ann_frisk annual free risk
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#' @param method "simple" or "modified" (def: "simple")
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' burke_ratio(xx,ann_frisk=0.01,t=12)
+#' burke_ratio(xx,ann_frisk=0.01,t=12,method="modified")
+#'
+burke_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE,method=c("simple","modified")) {
+  aret <- ann_return(x,t,is_geom)
+  cdd <- sqrt(sum(cdrawdown(x)^2))
+  method <- method[1]
+  switch(method,
+         "simple" = return ((aret - ann_frisk)/cdd),
+         "modified" = return ((aret - ann_frisk)/(cdd*sqrt(length(x)))),
+         stop("unknown method")
+  )
+}
 
+
+#' Sterling ratio
+#'
+#' A risk-adjusted measure like Calmar ratio but the denominator is the largest consecutive drawdown (excluded the 10% excess in the original formula)
+#'
+#' @param x asset returns
+#' @param ann_frisk annual free risk
+#' @param t frequency of data. 1: yearly, 4: quarterly, 12: monthly, 52: weekly, 252: daily
+#' @param is_geom TRUE geometric, FALSE simple
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' xx <- c(0.003,0.026,0.015,-0.009,-0.014,-0.024,0.015,0.066,-0.014,0.039)
+#' sterling_ratio(xx,ann_frisk=0.01,t=12)
+#'
+sterling_ratio <- function(x,ann_frisk=0,t=252,is_geom=TRUE) {
+  (ann_return(x,t,is_geom) - ann_frisk)/max(cdrawdown(x,is_geom))
 }

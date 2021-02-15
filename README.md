@@ -29,7 +29,9 @@ remotes::install_github("maxto/qapi")
 - **ann_sharpe_ratio** - Annualized Sharpe ratio
 - **ann_sortino_ratio** - Annualized Sortino ratio
 - **avg_drawdown** - Average Drawdown
+- **burke_ratio** - Burke ratio
 - **calmar_ratio** - Calmar ratio
+- **cdrawdown** - Continuous drawdown
 - **downside_potential** -  Downside Potential
 - **downside_risk** - Downside risk
 - **drawdown** - Drawdown
@@ -37,12 +39,16 @@ remotes::install_github("maxto/qapi")
 - **excess_return** - Excess return
 - **hist_cvar** - Historical Conditional Value At Risk
 - **hist_var** - Historical Value At Risk
+- **martin_ratio** - Martin ratio
 - **max_drawdown** - Max drawdown
 - **omega_ratio** - Omega ratio
+- **pain_index** - Pain index
+- **pain_ratio** - Pain ratio
 - **param_cvar** - Parametric Conditional Value At Risk
 - **param_var** - Parametric Value At Risk
 - **sharpe_ratio** - Sharpe ratio
 - **sortino_ratio** - Sortino ratio
+- **sterling_ratio** - Sterling ratio
 - **ulcer_index** - Ulcer index
 - **upside_potential** - Upside potential
 - **upside_risk** - Upside risk
