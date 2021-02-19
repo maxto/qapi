@@ -1,7 +1,7 @@
 Package: qapi
 Title: Low-level functions for quantitative analysis
-Version: 0.0.1.9003
-Date: 2021-02-15 16:35:06
+Version: 0.0.1.9004
+Date: 2021-02-19 19:14:45
 Authors@R: 
     person(given = "Max",
            family = "Todaro",

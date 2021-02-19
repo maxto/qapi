@@ -4,7 +4,7 @@
 
 Qapi provides a collection of low-level functions for quantitative analysis in finance. The package aims to optimize metrics for local data analysis, shiny web app or plumber-based microservice. Code is minimal with a limited packages dependency and basic input requirements. No missing values handling.
 
-The package can be easily applied to `matrix`, `data.frame`, `data.table`, `list`, etc. with `apply` family functions or other packages, working on vectors and matrices.
+The package can be easily applied to `matrix`, `data.frame`, `data.table`, `list`, etc. with `apply` family of functions or custom helpers. It works with vectors and matrices.
 
 Functions are implemented in pure R, for big data manipulation is advisable to use parallelization or C-based calculations.
 
@@ -62,7 +62,13 @@ remotes::install_github("maxto/qapi")
 
 ### Time series
 
-- **rand_ts** - Random time series
+- **rand_ts** - Random time series for testing
+
+### Utils
+
+- **as_xts** - Convert data to xts class with pre-calculated dates from today (backward)
+- **windowing** - Create a training/test set with sliding windows (rolling, anchored, with/without overlapping)
+
 
 ## Usage
 
@@ -79,10 +85,11 @@ sharpe_ratio(ts_mat[,1])
 sharpe_ratio(ts_xts[,1])
 sharpe_ratio(ts_df$s1)
 
-# for multiple columns use an apply function
+# for multiple columns
 apply(ts_mat,2,function(a)sharpe_ratio(a))
 apply(ts_xts,2,function(a)sharpe_ratio(a))
 apply(ts_df,2,function(a)sharpe_ratio(a))
 
 ```
+
 
