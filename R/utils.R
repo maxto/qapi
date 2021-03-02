@@ -34,7 +34,7 @@ as_xts <- function(x) {
 #' @param k windows size (training)
 #' @param s sliding step (test)
 #' @param method "window" (default) or "anchored" (no old data forgetting)
-#' @param overlapping TRUE, skip training+test windows (e.g. training 1:12/test 13:15,training 16:27/test 28:30,...)
+#' @param overlapping FALSE, skip training+test windows (e.g. training 1:12/test 13:15,training 16:27/test 28:30,...)
 #'
 #' @return list
 #' @export
@@ -42,9 +42,9 @@ as_xts <- function(x) {
 #' @examples
 #' windowing(60,12,3)
 #' windowing(60,12,3,"anchored")
-#' windowing(60,12,3,overlapping=TRUE)
+#' windowing(60,12,3,overlapping=FALSE)
 #'
-windowing <- function(x = NULL,k = NULL,s = 1,method = c("window","anchored"),overlapping=F) {
+windowing <- function(x = NULL,k = NULL,s = 1,method = c("window","anchored"),overlapping=TRUE) {
   if (is.null(x)) stop("insert a number")
   if (is.null(k)) k <- length(x)
   if (s > x) stop("length of window size cannot be higher than length of sample")
@@ -55,9 +55,9 @@ windowing <- function(x = NULL,k = NULL,s = 1,method = c("window","anchored"),ov
     # train == test
     return (out)
   }
-  v <- 0
+  v <- k
   if (overlapping) {
-    v <- k
+    v <- 0
   }
 
   nseq <- seq(1,x-k+1,s+v)

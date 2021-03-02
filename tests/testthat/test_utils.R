@@ -12,7 +12,7 @@ test_that("as_xts", {
 })
 
 test_that("windowing", {
-  ww <- windowing(x=60,k=12,s=3,method="window",overlapping = F)
+  ww <- windowing(x=60,k=12,s=3,method="window",overlapping = T)
   expect_identical(class(ww),"list")
   expect_length(ww,2)
   expect_equal(names(ww),c("train","test"))

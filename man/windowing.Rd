@@ -9,7 +9,7 @@ windowing(
   k = NULL,
   s = 1,
   method = c("window", "anchored"),
-  overlapping = F
+  overlapping = TRUE
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ windowing(
 
 \item{method}{"window" (default) or "anchored" (no old data forgetting)}
 
-\item{overlapping}{TRUE, skip training+test windows (e.g. training 1:12/test 13:15,training 16:27/test 28:30,...)}
+\item{overlapping}{FALSE, skip training+test windows (e.g. training 1:12/test 13:15,training 16:27/test 28:30,...)}
 }
 \value{
 list
@@ -32,6 +32,6 @@ Create a training/test set with sliding windows. Return a list of indices for tr
 \examples{
 windowing(60,12,3)
 windowing(60,12,3,"anchored")
-windowing(60,12,3,overlapping=TRUE)
+windowing(60,12,3,overlapping=FALSE)
 
 }
