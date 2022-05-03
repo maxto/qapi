@@ -2,7 +2,7 @@
 
 ## Overview
 
-Qapi provides a collection of low-level functions for quantitative analysis in finance. The package aims to optimize metrics for local data analysis, shiny web app or plumber-based microservice. Code is minimal with a limited packages dependency and basic input requirements. No missing values handling.
+Qapi provides a light-weight library for quantitative analysis in finance. The package aims to optimize metrics for local data analysis, shiny web app or plumber-based microservice. Code is minimal with a limited packages dependency and basic input requirements. No missing values handling.
 
 The package can be easily applied to `matrix`, `data.frame`, `data.table`, `list`, etc. with `apply` family of functions or custom helpers. It works with vectors and matrices.
 
