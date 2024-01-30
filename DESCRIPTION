@@ -1,7 +1,7 @@
 Package: qapi
 Title: Low-level functions for quantitative analysis
-Version: 0.0.1.9007
-Date: 2023-11-15 12:46:52.232059
+Version: 0.0.1.9008
+Date: 2024-01-30 11:39:22.159602
 Authors@R: 
     person(given = "Max",
            family = "Todaro",
@@ -22,4 +22,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
